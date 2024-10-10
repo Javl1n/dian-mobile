@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "breeze-native",
-    "slug": "breeze-native",
+    "name": "Dian: Mobile App",
+    "slug": "dian-mobile-app",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
@@ -19,20 +19,28 @@
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "package": "com.javos.dian"
     },
     "plugins": [
       "expo-router",
       [
         "expo-font",
         {
-          "fonts": ["node_modules/@expo-google-fonts/inter/Inter_900Black.ttf"]
+          "fonts": [
+            "node_modules/@expo-google-fonts/inter/Inter_900Black.ttf"
+          ]
         }
       ],
       "expo-secure-store"
     ],
     "experiments": {
       "typedRoutes": true
+    },
+    "extra": {
+      "eas": {
+        "projectId": "2bf28d77-4483-4d9a-9386-d6923aaa180a"
+      }
     }
   }
 }
