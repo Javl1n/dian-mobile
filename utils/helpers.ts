@@ -11,6 +11,7 @@ export async function handleApiErrors<T extends FieldValues>({
   setError: UseFormSetError<T>;
   showToast: (props: ToastProps) => void;
 }): Promise<void> {
+  //  
   if (error.name === 'HTTPError' && error.response.status === 422) {
     const errors = await (error as any).response.json();
 
@@ -27,7 +28,7 @@ export async function handleApiErrors<T extends FieldValues>({
     });
   } else {
     // Uncomment to see the full error object
-    // console.log(JSON.stringify(error, null, 2));
+    console.log(JSON.stringify(error, null, 2));
     showToast({
       type: 'error',
       message: 'Something went wrong',

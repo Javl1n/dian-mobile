@@ -12,6 +12,8 @@ import { useToast } from '@/context/toast';
 import type { LoginUser } from '@/features/auth/useAuthMutations';
 import { useLoginMutation } from '@/features/auth/useAuthMutations';
 import { handleApiErrors } from '@/utils/helpers';
+import * as Device from 'expo-device';
+
 
 export default function Login() {
   const userLogin = useLoginMutation();
@@ -27,6 +29,7 @@ export default function Login() {
     defaultValues: {
       email: '',
       password: '',
+      device: Device.deviceName,
     },
   });
 

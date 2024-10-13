@@ -3,9 +3,11 @@ import { useMutation } from '@tanstack/react-query';
 import type { Session } from '@/context/session';
 import http from '@/utils/http';
 
+
 export type LoginUser = {
   email: string;
   password: string;
+  device: string | null;
 };
 
 export type RegisterUser = {
@@ -13,6 +15,7 @@ export type RegisterUser = {
   email: string;
   password: string;
   password_confirmation: string;
+  device: string | null;
 };
 
 export type ForgotPasswordUser = {
@@ -47,7 +50,8 @@ export async function logout({ token }: { token?: string }): Promise<boolean> {
         headers: { Authorization: `Bearer ${token}` },
       })
       .json();
-
+    
+    
     return true;
   } catch (error) {
     // eslint-disable-next-line no-console

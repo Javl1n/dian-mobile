@@ -12,6 +12,8 @@ import { useToast } from '@/context/toast';
 import type { RegisterUser } from '@/features/auth/useAuthMutations';
 import { useRegisterMutation } from '@/features/auth/useAuthMutations';
 import { handleApiErrors } from '@/utils/helpers';
+import * as Device from 'expo-device';
+
 
 export default function Register() {
   const { setSession } = useSession();
@@ -29,6 +31,7 @@ export default function Register() {
       email: '',
       password: '',
       password_confirmation: '',
+      device: Device.deviceName,
     },
   });
 
@@ -36,6 +39,7 @@ export default function Register() {
     userRegister.mutate(data, {
       onSuccess: ({ token }: Session) => {
         setSession({ token });
+        router.push('/');
       },
       onError: async (error) => {
         await handleApiErrors({ error, setError, showToast });

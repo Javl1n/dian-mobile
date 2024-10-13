@@ -70,7 +70,6 @@ const DrawerContent = (props: any) => {
         <Button
           onPress={async () => {
             const response = await logout({ token: session?.token });
-
             if (response) {
               setSession(null);
 
@@ -90,6 +89,11 @@ const HomeIcon = ({ size, color }: { size: number; color: string }) => {
   return <Icon name="home-outline" size={size} color={color} />;
 };
 
+const MessageIcon = ({ size, color }: { size: number; color: string }) => {
+  return <Icon name="chatbubbles-outline" size={size} color={color} />;
+};
+
+
 export default function AppLayout() {
   const { session } = useSession();
 
@@ -106,9 +110,9 @@ export default function AppLayout() {
         <Drawer.Screen
           name="index"
           options={{
-            drawerLabel: 'Dashboard',
-            title: 'Dashboard',
-            drawerIcon: HomeIcon,
+            drawerLabel: 'Messages',
+            title: 'Messages',
+            drawerIcon: MessageIcon,
           }}
         />
         <Drawer.Screen
