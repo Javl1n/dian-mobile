@@ -29,6 +29,7 @@ export async function handleApiErrors<T extends FieldValues>({
   } else {
     // Uncomment to see the full error object
     console.log(JSON.stringify(error, null, 2));
+    console.log(error);
     showToast({
       type: 'error',
       message: 'Something went wrong',

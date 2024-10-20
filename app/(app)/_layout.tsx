@@ -3,7 +3,7 @@ import {
   DrawerItemList,
 } from '@react-navigation/drawer';
 import { useQueryClient } from '@tanstack/react-query';
-import { Redirect, router } from 'expo-router';
+import { Redirect, router, Stack } from 'expo-router';
 import { Drawer } from 'expo-router/drawer';
 import { Pressable, Text, View } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
@@ -69,6 +69,7 @@ const DrawerContent = (props: any) => {
       >
         <Button
           onPress={async () => {
+            setSession(null);
             const response = await logout({ token: session?.token });
             if (response) {
               setSession(null);
@@ -93,7 +94,6 @@ const MessageIcon = ({ size, color }: { size: number; color: string }) => {
   return <Icon name="chatbubbles-outline" size={size} color={color} />;
 };
 
-
 export default function AppLayout() {
   const { session } = useSession();
 
@@ -105,14 +105,37 @@ export default function AppLayout() {
     <GestureHandlerRootView style={{ flex: 1 }}>
       <Drawer
         drawerContent={DrawerContent}
-        screenOptions={{ drawerHideStatusBarOnOpen: true }}
+        screenOptions={{ drawerHideStatusBarOnOpen: false }}
       >
         <Drawer.Screen
-          name="index"
+          name="posts/index"
+          options={{
+            drawerLabel: 'Home',
+            title: 'Home',
+            drawerIcon: HomeIcon,
+          }}
+        />
+
+        <Drawer.Screen
+          name="messages/index"
           options={{
             drawerLabel: 'Messages',
             title: 'Messages',
             drawerIcon: MessageIcon,
+          }}
+        />
+        <Drawer.Screen
+          name="posts/create"
+          options={{
+            drawerLabel: 'Create Post',
+            title: 'Create Post',
+            drawerItemStyle: { display: 'none' },
+          }}
+        />
+        <Drawer.Screen
+          name="index"
+          options={{
+            drawerItemStyle: { display: 'none' },
           }}
         />
         <Drawer.Screen
@@ -132,5 +155,6 @@ export default function AppLayout() {
         /> */}
       </Drawer>
     </GestureHandlerRootView>
+    
   );
 }

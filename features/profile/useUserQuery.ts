@@ -6,7 +6,10 @@ import http from '@/utils/http';
 export interface User {
   id: string;
   name: string;
+  username?: string;
   email: string;
+  birthdate?: Date;
+  gender?: boolean;
   created_at: string;
   updated_at: string;
 }

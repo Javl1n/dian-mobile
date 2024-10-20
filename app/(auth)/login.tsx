@@ -38,7 +38,7 @@ export default function Login() {
       onSuccess: ({ token }: Session) => {
         setSession({ token });
 
-        router.push('/');
+        router.push('/posts');
       },
       onError: async (error) => {
         await handleApiErrors({ error, setError, showToast });

@@ -6,7 +6,7 @@ export default function AuthLayout() {
   const { session } = useSession();
 
   if (session?.token) {
-    return <Redirect href="/" />;
+    return <Redirect href="/posts" />;
   }
 
   return <Slot />;
