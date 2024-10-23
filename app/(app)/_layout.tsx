@@ -94,6 +94,10 @@ const MessageIcon = ({ size, color }: { size: number; color: string }) => {
   return <Icon name="chatbubbles-outline" size={size} color={color} />;
 };
 
+const PairIcon = ({ size, color }: { size: number; color: string }) => {
+  return <Icon name="people-outline" size={size} color={color} />;
+};
+
 export default function AppLayout() {
   const { session } = useSession();
 
@@ -115,7 +119,14 @@ export default function AppLayout() {
             drawerIcon: HomeIcon,
           }}
         />
-
+        <Drawer.Screen
+          name="people/index"
+          options={{
+            drawerLabel: 'People',
+            title: 'People',
+            drawerIcon: PairIcon,
+          }}
+        />
         <Drawer.Screen
           name="messages/index"
           options={{

@@ -38,6 +38,7 @@ export default function Create() {
           handleSubmit,
           setError,
           formState: { errors },
+          reset
         } = useForm<UploadPost>({
           defaultValues: {
             text_content: '',
@@ -58,6 +59,7 @@ export default function Create() {
                          message: 'Post uploaded successfully',
                          duration: 1000
                     });
+                    reset();
 
                     router.push('/posts');
                },
@@ -88,13 +90,13 @@ export default function Create() {
                />
                <View style={tw`flex-row gap-3`}>
                     <Avatar
-                         size="sm"
+                         size="xs"
                          source={{
-                              uri: `https://i.pravatar.cc/300?=img=${user?.id}`,
+                              uri: `https://ui-avatars.com/api/?name=${user?.name.replace(' ', '+')}&size=64"`,
                          }}
                     />
                     <View>
-                         <Text style={tw`text-lg font-semibold`}>{user?.name}</Text>
+                         <Text style={tw`text-lg font-semibold my-auto`}>{user?.name}</Text>
                     </View>
                </View>
                <View style={tw`pt-4`}>

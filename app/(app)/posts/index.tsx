@@ -4,7 +4,8 @@ import tw from 'twrnc';
 import { Avatar } from '@/components/ui/avatar';
 import { Icon } from '@/components/ui/icon';
 import { Button } from '@/components/ui/button';
-import { useState } from 'react';
+import PostHeader from '@/components/ui/post/header';
+import { useCallback, useState } from 'react';
 import { Link, router } from 'expo-router';
 import { User, useUserQuery } from '@/features/profile/useUserQuery';
 import { Post, usePostsQuery } from '@/features/post/usePostQuery';
@@ -12,20 +13,35 @@ import { format, formatDistance, formatRelative } from 'date-fns';
 import { useRefreshOnFocus } from '@/hooks/useRefreshOnFocus';
 
 export default function Index() {
-     const { data: user, refetch } = useUserQuery();
+     const [refreshing, setRefreshing] = useState(false);
+     const { data: user, refetch: refetchUser } = useUserQuery();
+     const { data: posts, isLoading: isLoadingPosts, refetch: refetchPosts, isRefetching: isRefetchingPosts } = usePostsQuery();
+     // console.log(posts);
+     useRefreshOnFocus(refetchPosts);
+
+     const onRefresh = useCallback(() => {
+          setRefreshing(true);
+          setTimeout(() => {
+               setRefreshing(false);
+               refetchPosts();
+          }, 2000);
+     }, []);
+
      return (
-          <ScrollView style={tw`flex-1`}>
-               <CreatePost user={user!} />
-               <PostList />
+          <ScrollView 
+               style={tw`flex-1`}
+               refreshControl={
+                    <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+               }
+          >
+               <CreatePostSection user={user!} />
+               <PostList posts={posts} isLoading={isLoadingPosts} isRefetching={isRefetchingPosts} />
           </ScrollView>
      );
 }
 
-const PostList = () => {
-     const { data: posts, isLoading, refetch, isRefetching } = usePostsQuery();
-     // console.log(posts);
-     useRefreshOnFocus(refetch);
-
+const PostList = ({isLoading, isRefetching, posts}: {isLoading: boolean, isRefetching: boolean, posts: any}) => {
+     
      if (isLoading) return null;
      if (isRefetching) return null;
 
@@ -35,18 +51,12 @@ const PostList = () => {
                     const createdDate = new Date(post.created_at);
                     return (
                          <View key={post.id} style={tw`bg-white py-2 px-3 mt-2`}>
-                              <View style={tw`flex flex-row gap-2`}>
-                                   <Avatar
-                                        size="xs"
-                                        source={{
-                                             uri: `https://i.pravatar.cc/300`,
-                                        }}
-                                   />
-                                   <View style={tw`my-auto`}>
-                                        <Text style={tw`text-base font-bold`}>{post.user.name}</Text>
-                                        <Text style={tw`text-xs`}>{formatRelative(createdDate, new Date())}</Text>
-                                   </View>
-                              </View>
+                              <PostHeader 
+                                   textHeader={post.user.name}
+                                   avatarSize='xs'
+                                   avatarUri={`https://ui-avatars.com/api/?name=${post.user.name.replace(' ', '+')}&size=300"`}
+                                   subHeader={formatRelative(createdDate, new Date())}
+                              />
                               <View style={tw`px-1 py-4`}>
                                    <Text style={tw`text-2xl font-light`}>{post.content}</Text>
                               </View>
@@ -58,14 +68,14 @@ const PostList = () => {
 }
 
 
-const CreatePost = ({ user }: {user: User}) => {
+const CreatePostSection = ({ user }: {user: User}) => {
      const [pressed, setPressed] = useState(false);
      return (
           <View style={tw`bg-white py-2 px-3 border-t border-gray-100 flex flex-row gap-3`}>
                <Avatar
                     size="xs"
                     source={{
-                         uri: `https://i.pravatar.cc/300?=img=${user?.id}`,
+                         uri: `https://ui-avatars.com/api/?name=${user?.name.replace(' ', '+')}&size=64"`,
                     }}
                />
                <Pressable
