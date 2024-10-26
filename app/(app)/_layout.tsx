@@ -56,7 +56,6 @@ const DrawerContent = (props: any) => {
         contentContainerStyle={tw`bg-gray-100`}
       >
         <UserProfile />
-
         <View style={tw`bg-white pt-2`}>
           <DrawerItemList {...props} />
         </View>
@@ -73,7 +72,6 @@ const DrawerContent = (props: any) => {
             const response = await logout({ token: session?.token });
             if (response) {
               setSession(null);
-
               queryClient.invalidateQueries();
             }
           }}

@@ -4,7 +4,7 @@ import { useSession } from '@/context/session';
 import http from '@/utils/http';
 
 export interface User {
-  id: string;
+  id: number;
   name: string;
   bio: string | null;
   username?: string;
@@ -13,6 +13,15 @@ export interface User {
   gender?: boolean;
   created_at: string;
   updated_at: string;
+  followers: Match[];
+  following: Match[];
+}
+
+export interface Match {
+  id: number;
+  follower_id: number;
+  following_id: number;
+  status: number;
 }
 
 /**

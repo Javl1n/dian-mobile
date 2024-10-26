@@ -1,11 +1,11 @@
-import { usePeopleQuery } from "@/features/people/usePeopleQuery";
-import { ScrollView } from "react-native-gesture-handler";
-import { Image, Pressable, RefreshControl, Text, View } from "react-native";
+import { pair, usePeopleQuery } from "@/features/people/usePeopleQuery";
+import { Image, Pressable, RefreshControl, Text, View, ScrollView } from "react-native";
 import tw from 'twrnc';
-import { User } from "@/features/profile/useUserQuery";
+import { User, useUserQuery } from "@/features/profile/useUserQuery";
 import { useCallback, useState } from "react";
 import PostHeader from "@/components/ui/post/header";
 import PostAction from "@/components/ui/post/action";
+import { useSession } from "@/context/session";
 
 export default function Index() {
      const [refreshing, setRefreshing] = useState(false);
@@ -13,10 +13,12 @@ export default function Index() {
 
      const onRefresh = useCallback(() => {
           setRefreshing(true);
-          setTimeout(() => {
+          // setTimeout(() => {
                refetchPeople();
+          // }, 2000);
+          setTimeout(() => {
                setRefreshing(false);
-          }, 2000);
+          }, 500);
      }, []);
 
      return (
@@ -26,28 +28,29 @@ export default function Index() {
                     <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
                }
           >
-               <PeopleList isLoading={isLoadingPeople} isRefetching={isRefetchingPeople} people={people} />
+               <PeopleList isLoadingPeople={isLoadingPeople} isRefetching={isRefetchingPeople} people={people} />
           </ScrollView>
      );
 }
 
-const PeopleList = ({isLoading, people, isRefetching}: {isLoading: boolean, people: any, isRefetching: boolean}) => {
-     
-     if (isLoading || isRefetching) return null;
+const PeopleList = ({isLoadingPeople, people, isRefetching}: {isLoadingPeople: boolean, people: any, isRefetching: boolean}) => {
+     const { data: user, isLoading: isLoadingUser } = useUserQuery();
+
+     if (isLoadingPeople || isRefetching) return null;
 
      return (
           <View style={tw`mb-2`}>
-               {(people as Array<User>).map((person) => {
-                    return <PersonInfo person={person} />
+               {(people as User[])?.map((person) => {
+                    return <PersonInfo user={user} key={person.id} person={person} />
                })}
           </View>
      )
 }
 
-const PersonInfo = ({person} : {
-     person: User
+const PersonInfo = ({person, user} : {
+     person: User,
+     user: User | undefined,
 }) => {
-     
      return (
           <View key={person.id} style={tw`mt-2 bg-white`}>
                <View style={tw`p-2`}>
@@ -68,19 +71,37 @@ const PersonInfo = ({person} : {
                          }}
                     />
                </View>
-               <Actions person={person} />
+               <Actions user={user} person={person} />
           </View>
      )
 }
 
-const Actions = ({person}: {person: User}) => {
+const Actions = ({person, user}: {person: User, user:User | undefined}) => {
+     const { session, setSession } = useSession();
 
-     const [action, setAction] = useState<boolean | null>(null);
+     // const status = person?.followers.filter((match) );
+     const match = person?.followers.filter((match) => match.follower_id == user!.id)[0] ?? null ;
+     
+     const status = match == null ? null
+                    : match?.status == 1 ? true : false
+
+     const [action, setAction] = useState<boolean | null>(status);
      const ignoreActionLogic = !action && action !== null;
 
      const pressActionState = (state: boolean) => {
           if (action !== state || action === null) setAction(state);
           if (action === state) setAction(null)
+     }
+
+     const followPerson = async (state: boolean) => {
+          const response = await pair({ 
+               token: session?.token, 
+               user: person.id, 
+               action: state ? "follow" : "unfollow" 
+          });
+          if (response) {
+               pressActionState(state);
+          }
      }
 
      return (
@@ -90,7 +111,7 @@ const Actions = ({person}: {person: User}) => {
                     icon={ignoreActionLogic ? "heart-dislike" : 'heart-dislike-outline'}
                     color={ignoreActionLogic ? "text-red-500" : 'default'}
                     onPress={() => {
-                         pressActionState(false);
+                         followPerson(false);
                     }}
                />
                <PostAction
@@ -98,7 +119,7 @@ const Actions = ({person}: {person: User}) => {
                     icon={action ? "heart" : 'heart-outline'}
                     color={action ? "text-red-500" : 'default'}
                     onPress={() => {
-                         pressActionState(true);
+                         followPerson(true);
                     }}
                />
           </View>

@@ -1,5 +1,4 @@
-import { Text, View, TextInput, Pressable, RefreshControl } from 'react-native';
-import { ScrollView } from 'react-native-gesture-handler';
+import { Text, View, TextInput, Pressable, RefreshControl, ScrollView } from 'react-native';
 import tw from 'twrnc';
 import { Avatar } from '@/components/ui/avatar';
 import { Icon } from '@/components/ui/icon';
@@ -15,16 +14,23 @@ import { useRefreshOnFocus } from '@/hooks/useRefreshOnFocus';
 export default function Index() {
      const [refreshing, setRefreshing] = useState(false);
      const { data: user, refetch: refetchUser } = useUserQuery();
-     const { data: posts, isLoading: isLoadingPosts, refetch: refetchPosts, isRefetching: isRefetchingPosts } = usePostsQuery();
+     const { 
+          data: posts, 
+          isLoading: isLoadingPosts, 
+          refetch: refetchPosts, 
+          isRefetching: isRefetchingPosts 
+     } = usePostsQuery();
      // console.log(posts);
      useRefreshOnFocus(refetchPosts);
 
      const onRefresh = useCallback(() => {
+          refetchPosts();
           setRefreshing(true);
-          setTimeout(() => {
-               setRefreshing(false);
-               refetchPosts();
-          }, 2000);
+          if (isRefetchingPosts) setRefreshing(false);
+          // setTimeout(() => {
+          //      setRefreshing(false);
+          //      refetchPosts();
+          // }, 2000);
      }, []);
 
      return (

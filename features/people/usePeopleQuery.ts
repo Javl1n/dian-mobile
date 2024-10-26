@@ -4,25 +4,6 @@ import { useSession } from '@/context/session';
 import http from '@/utils/http';
 import { User } from '@/features/profile/useUserQuery';
 
-
-export interface Post {
-     id: string;
-     user: User;
-     content: string;
-     profile: boolean;
-     created_at: string;
-     updated_at: string;
-}
-
-/**
- * Custom hook to fetch and cache user data.
- *
- * The User data is set to stay in cache indefinitely (staleTime: Infinity) because:
- * 1. User information rarely changes during a session.
- * 2. It reduces unnecessary network requests, improving performance.
- * 3. It ensures consistent user data across the app without frequent refetches.
- * 4. Any updates to user data should be manually invalidated after successful mutations.
- */
 export const usePeopleQuery = () => {
      const { session } = useSession();
 
@@ -39,3 +20,29 @@ export const usePeopleQuery = () => {
           refetchOnReconnect: true,
      });
 };
+
+export async function pair({ 
+     token, user, action 
+}: { 
+     token?: string, 
+     user: User['id'], 
+     action: "follow" | "unfollow"
+}): Promise<boolean> {
+     try {
+       await http
+         .post(`user/follow`, {
+               headers: { Authorization: `Bearer ${token}` },
+               json: {
+                    follow: action,
+                    person: user
+               }
+         })
+         .json();
+       return true;
+     } catch (error) {
+       // eslint-disable-next-line no-console
+       console.error('pairing error', error);
+   
+       return false;
+     }
+}
