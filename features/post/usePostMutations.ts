@@ -18,6 +18,6 @@ export function useUploadPostMutation() {
                          headers: { Authorization: `Bearer ${session?.token}` },
                          json: data
                     })
-                    .json<{user: any}>(),
-     })
+                    .json(),
+     });
 }

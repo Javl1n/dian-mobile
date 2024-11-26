@@ -4,34 +4,40 @@ import { Avatar } from '@/components/ui/avatar';
 import { Icon } from '@/components/ui/icon';
 import { Button } from '@/components/ui/button';
 import PostHeader from '@/components/ui/post/header';
+import PostAction from '@/components/ui/post/action';
 import { useCallback, useState } from 'react';
 import { Link, router } from 'expo-router';
 import { User, useUserQuery } from '@/features/profile/useUserQuery';
 import { Post, usePostsQuery } from '@/features/post/usePostQuery';
 import { format, formatDistance, formatRelative } from 'date-fns';
 import { useRefreshOnFocus } from '@/hooks/useRefreshOnFocus';
+import { useSession } from '@/context/session';
 
 export default function Index() {
      const [refreshing, setRefreshing] = useState(false);
      const { data: user, refetch: refetchUser } = useUserQuery();
-     const { 
+     const {
           data: posts, 
-          isLoading: isLoadingPosts, 
-          refetch: refetchPosts, 
-          isRefetching: isRefetchingPosts 
+          isLoading: isLoading, 
+          refetch: refetch, 
+          isRefetching: isRefetching 
      } = usePostsQuery();
-     // console.log(posts);
-     useRefreshOnFocus(refetchPosts);
+
+
+     // useRefreshOnFocus(refetch);
 
      const onRefresh = useCallback(() => {
-          refetchPosts();
+          refetch();
           setRefreshing(true);
-          if (isRefetchingPosts) setRefreshing(false);
-          // setTimeout(() => {
-          //      setRefreshing(false);
-          //      refetchPosts();
-          // }, 2000);
+          if (isRefetching) setRefreshing(false);
+          setTimeout(() => {
+               setRefreshing(false);
+               refetch();
+          }, 2000);
      }, []);
+
+     if (isRefetching) return null;
+     if (isLoading) return null;
 
      return (
           <ScrollView 
@@ -40,17 +46,13 @@ export default function Index() {
                     <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
                }
           >
-               <CreatePostSection user={user!} />
-               <PostList posts={posts} isLoading={isLoadingPosts} isRefetching={isRefetchingPosts} />
+               <CreatePostSection />
+               <PostList posts={posts}  />
           </ScrollView>
      );
 }
 
-const PostList = ({isLoading, isRefetching, posts}: {isLoading: boolean, isRefetching: boolean, posts: any}) => {
-     
-     if (isLoading) return null;
-     if (isRefetching) return null;
-
+const PostList = ({posts}: {posts: any}) => {
      return (
           <>
                {(posts as Array<Post>).splice(0).reverse().map((post) => {
@@ -66,6 +68,32 @@ const PostList = ({isLoading, isRefetching, posts}: {isLoading: boolean, isRefet
                               <View style={tw`px-1 py-4`}>
                                    <Text style={tw`text-2xl font-light`}>{post.content}</Text>
                               </View>
+                              <View style={tw`flex flex-row text-lg`}>
+                                   <PostAction
+                                        text="Like"
+                                        icon="heart-outline"
+                                        color="default"
+                                        // onPress={() => {
+                                        //      followPerson(false);
+                                        // }}
+                                   />
+                                   <PostAction
+                                        text="Comment"
+                                        icon="chatbubble-outline"
+                                        color="default"
+                                        // onPress={() => {
+                                        //      followPerson(false);
+                                        // }}
+                                   />
+                                   {/* <PostAction
+                                        text={action ? "Followed" : "Follow"}
+                                        icon={action ? "heart" : 'heart-outline'}
+                                        color={action ? "text-red-500" : 'default'}
+                                        onPress={() => {
+                                             followPerson(true);
+                                        }}
+                                   /> */}
+                              </View>
                          </View>
                     );
                })}
@@ -74,7 +102,9 @@ const PostList = ({isLoading, isRefetching, posts}: {isLoading: boolean, isRefet
 }
 
 
-const CreatePostSection = ({ user }: {user: User}) => {
+const CreatePostSection = () => {
+     const { data: user, refetch: refetchUser } = useUserQuery();
+
      const [pressed, setPressed] = useState(false);
      return (
           <View style={tw`bg-white py-2 px-3 border-t border-gray-100 flex flex-row gap-3`}>

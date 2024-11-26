@@ -6,9 +6,11 @@ import {
 } from 'react';
 
 import { useStorageState } from '@/hooks/useStorageState';
+import { User } from '@/features/profile/useUserQuery';
 
 export type Session = {
   token: string;
+  user?: User;
 };
 
 const AuthContext = createContext<{

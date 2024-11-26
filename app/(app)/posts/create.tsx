@@ -1,5 +1,6 @@
 import { Avatar } from '@/components/ui/avatar';
 import { Icon } from '@/components/ui/icon';
+import { useSession } from '@/context/session';
 import { useToast } from '@/context/toast';
 import { UploadPost, useUploadPostMutation } from '@/features/post/usePostMutations';
 import { useUserQuery } from '@/features/profile/useUserQuery';
@@ -24,9 +25,9 @@ const HeaderLeft = () => {
 }
 
 export default function Create() {
-     const { data: user, isLoading } = useUserQuery();
+     const { data: user, refetch: refetchUser } = useUserQuery();
+     
      const { showToast } = useToast();
-     const queryClient = useQueryClient();
 
 
      const  [postPress, setPostPress] = useState(false);
@@ -39,12 +40,12 @@ export default function Create() {
           setError,
           formState: { errors },
           reset
-        } = useForm<UploadPost>({
+     } = useForm<UploadPost>({
           defaultValues: {
-            text_content: '',
-            profile: false,
+               text_content: '',
+               profile: false,
           },
-        });
+     });
 
      const onSubmit: SubmitHandler<UploadPost> = async (data: UploadPost) => {
           setPostPress(false);
@@ -53,7 +54,6 @@ export default function Create() {
                     await handleApiErrors({error, setError, showToast})
                },
                onSuccess: async () => {
-                    queryClient.invalidateQueries({ queryKey: ['user'] });
                     await showToast({
                          type: 'success',
                          message: 'Post uploaded successfully',
@@ -114,7 +114,9 @@ export default function Create() {
                               />
                          )} 
                     />
-                    
+                    <View style={tw`border h-10 rounded`}>
+
+                    </View>
                </View>
           </ScrollView>
      );

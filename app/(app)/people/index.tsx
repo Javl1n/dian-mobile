@@ -9,7 +9,12 @@ import { useSession } from "@/context/session";
 
 export default function Index() {
      const [refreshing, setRefreshing] = useState(false);
-     const { data: people, isLoading: isLoadingPeople, refetch: refetchPeople, isRefetching: isRefetchingPeople } = usePeopleQuery();
+     const { 
+          data: people, 
+          isLoading: isLoadingPeople, 
+          refetch: refetchPeople, 
+          isRefetching: isRefetchingPeople 
+     } = usePeopleQuery();
 
      const onRefresh = useCallback(() => {
           setRefreshing(true);
@@ -34,22 +39,20 @@ export default function Index() {
 }
 
 const PeopleList = ({isLoadingPeople, people, isRefetching}: {isLoadingPeople: boolean, people: any, isRefetching: boolean}) => {
-     const { data: user, isLoading: isLoadingUser } = useUserQuery();
 
      if (isLoadingPeople || isRefetching) return null;
 
      return (
           <View style={tw`mb-2`}>
                {(people as User[])?.map((person) => {
-                    return <PersonInfo user={user} key={person.id} person={person} />
+                    return <PersonInfo key={person.id} person={person} />
                })}
           </View>
      )
 }
 
-const PersonInfo = ({person, user} : {
+const PersonInfo = ({person} : {
      person: User,
-     user: User | undefined,
 }) => {
      return (
           <View key={person.id} style={tw`mt-2 bg-white`}>
@@ -71,15 +74,16 @@ const PersonInfo = ({person, user} : {
                          }}
                     />
                </View>
-               <Actions user={user} person={person} />
+               <Actions person={person} />
           </View>
      )
 }
 
-const Actions = ({person, user}: {person: User, user:User | undefined}) => {
+const Actions = ({person}: {person: User}) => {
      const { session, setSession } = useSession();
+     const { data: user, refetch: refetchUser } = useUserQuery();
+     // const user = session?.user;
 
-     // const status = person?.followers.filter((match) );
      const match = person?.followers.filter((match) => match.follower_id == user!.id)[0] ?? null ;
      
      const status = match == null ? null

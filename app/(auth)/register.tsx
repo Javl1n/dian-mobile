@@ -13,6 +13,7 @@ import type { RegisterUser } from '@/features/auth/useAuthMutations';
 import { useRegisterMutation } from '@/features/auth/useAuthMutations';
 import { handleApiErrors } from '@/utils/helpers';
 import * as Device from 'expo-device';
+import { setBearerToken } from '@/utils/axios';
 
 
 export default function Register() {
@@ -32,6 +33,7 @@ export default function Register() {
       password: '',
       password_confirmation: '',
       device: Device.deviceName,
+      gender: true,
     },
   });
 
@@ -39,6 +41,7 @@ export default function Register() {
     userRegister.mutate(data, {
       onSuccess: ({ token }: Session) => {
         setSession({ token });
+        setBearerToken(token);
         router.push('/posts');
       },
       onError: async (error) => {
@@ -137,6 +140,16 @@ export default function Register() {
               />
             )}
           />
+
+          <View style={tw`flex-row gap-2`}>
+            {/* <View style={tw`border border-black/20 h-12 rounded bg-neutral-100 w-40`}> */}
+            <View style={tw`border border-blue-500 h-12 rounded bg-blue-100 flex-1`}>
+              <Text style={tw`m-auto font-bold`}>MALE</Text>
+            </View>
+            <View style={tw`border border-black/20 h-12 rounded-md bg-neutral-100 flex-1`}>
+              <Text style={tw`m-auto font-bold`}>FEMALE</Text>
+            </View>
+          </View>
         </View>
 
         <Button

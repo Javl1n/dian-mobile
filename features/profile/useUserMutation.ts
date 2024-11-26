@@ -5,8 +5,12 @@ import http from '@/utils/http';
 
 export interface UserProfile {
   name: string;
+  bio: string;
   password?: string | null;
   password_confirmation?: string | null;
+  gender: boolean;
+  interests: string[];
+  birth_date: string;
 }
 
 export function useUpdateUserProfileMutation() {
@@ -15,7 +19,7 @@ export function useUpdateUserProfileMutation() {
   return useMutation({
     mutationFn: (data: UserProfile) =>
       http
-        .post('user', {
+        .post('user/update', {
           headers: { Authorization: `Bearer ${session?.token}` },
           json: data,
         })

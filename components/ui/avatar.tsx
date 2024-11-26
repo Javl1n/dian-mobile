@@ -3,7 +3,7 @@ import { Image, View } from 'react-native';
 import tw from 'twrnc';
 
 interface AvatarProps extends ImageProps {
-  size?: 'xs' | 'sm' | 'md' | 'lg' | 'xl';
+  size?: 'xxs' | 'xs' | 'sm' | 'md' | 'lg' | 'xl';
   variant?: 'default' | 'rounded';
   isLoading?: boolean;
 }
@@ -22,6 +22,7 @@ export const Avatar = ({
   };
 
   const sizes = {
+    xxs: tw`w-10 h-10`,
     xs: tw`w-12 h-12`,
     sm: tw`w-16 h-16`,
     md: tw`w-24 h-24`,

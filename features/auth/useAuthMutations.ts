@@ -2,6 +2,7 @@ import { useMutation } from '@tanstack/react-query';
 
 import type { Session } from '@/context/session';
 import http from '@/utils/http';
+import { setBearerToken } from '@/utils/axios';
 
 
 export type LoginUser = {
@@ -16,6 +17,7 @@ export type RegisterUser = {
   password: string;
   password_confirmation: string;
   device: string | null;
+  gender: boolean;
 };
 
 export type ForgotPasswordUser = {
@@ -50,7 +52,7 @@ export async function logout({ token }: { token?: string }): Promise<boolean> {
         headers: { Authorization: `Bearer ${token}` },
       })
       .json();
-    
+      
     
     return true;
   } catch (error) {

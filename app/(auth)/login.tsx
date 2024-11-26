@@ -13,6 +13,7 @@ import type { LoginUser } from '@/features/auth/useAuthMutations';
 import { useLoginMutation } from '@/features/auth/useAuthMutations';
 import { handleApiErrors } from '@/utils/helpers';
 import * as Device from 'expo-device';
+import { setBearerToken } from '@/utils/axios';
 
 
 export default function Login() {
@@ -37,7 +38,7 @@ export default function Login() {
     userLogin.mutate(data, {
       onSuccess: ({ token }: Session) => {
         setSession({ token });
-
+        setBearerToken(token);
         router.push('/posts');
       },
       onError: async (error) => {

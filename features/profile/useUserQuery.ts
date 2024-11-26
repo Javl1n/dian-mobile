@@ -9,7 +9,7 @@ export interface User {
   bio: string | null;
   username?: string;
   email: string;
-  birthdate?: Date;
+  birthdate?: string;
   gender?: boolean;
   created_at: string;
   updated_at: string;
@@ -22,6 +22,16 @@ export interface Match {
   follower_id: number;
   following_id: number;
   status: number;
+}
+
+export interface Interest {
+  id: number;
+  name: string;
+}
+
+export interface EditInterest {
+  my_interests: string[];
+  all_interests: string[];
 }
 
 /**
@@ -43,6 +53,38 @@ export const useUserQuery = () => {
         .get('user', {
           headers: {
             Authorization: `Bearer ${session?.token}`,
+          },
+        })
+        .json<User>(),
+    staleTime: Infinity,
+  });
+};
+
+export const useEditInterestQuery = () => {
+  const { session } = useSession();
+  return useQuery<EditInterest, Error>({
+    queryKey: ['interests'],
+    queryFn: () =>
+      http
+        .get('profile/interests', {
+          headers: {
+            Authorization: `Bearer ${session?.token}`,
+          },
+        })
+        .json<EditInterest>(),
+    staleTime: Infinity,
+  })
+};
+
+export const useAuthUserQuery = ({token}: {token: string}) => {
+  
+  return useQuery<User, Error>({
+    queryKey: ['user'],
+    queryFn: () =>
+      http
+        .get('user', {
+          headers: {
+            Authorization: `Bearer ${token}`,
           },
         })
         .json<User>(),

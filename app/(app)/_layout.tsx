@@ -68,10 +68,10 @@ const DrawerContent = (props: any) => {
       >
         <Button
           onPress={async () => {
-            setSession(null);
             const response = await logout({ token: session?.token });
             if (response) {
               setSession(null);
+              console.log(session);
               queryClient.invalidateQueries();
             }
           }}
@@ -134,6 +134,14 @@ export default function AppLayout() {
           }}
         />
         <Drawer.Screen
+          name="messages/[id]"
+          options={{
+            // drawerLabel: 'Create Post',
+            title: 'Create Post',
+            drawerItemStyle: { display: 'none' },
+          }}
+        />
+        <Drawer.Screen
           name="posts/create"
           options={{
             drawerLabel: 'Create Post',
@@ -151,7 +159,7 @@ export default function AppLayout() {
           name="profile"
           options={{
             drawerLabel: 'Profile',
-            title: 'Profile',
+            title: 'Edit Profile',
             drawerItemStyle: { display: 'none' },
           }}
         />
