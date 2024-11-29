@@ -10,7 +10,7 @@ export interface UserProfile {
   password_confirmation?: string | null;
   gender: boolean;
   interests: string[];
-  birth_date: string;
+  birth_date: string | null;
 }
 
 export function useUpdateUserProfileMutation() {

@@ -37,27 +37,27 @@ export default function Profile() {
       password_confirmation: null,
       gender: user?.gender,
       interests: [],
-      birth_date: '',
+      birth_date: user?.birthdate !== null ? formatDate(new Date(user?.birthdate as string), 'yyyy-M-d') : '',
     },
   });
 
   const userUpdate = useUpdateUserProfileMutation();
 
   const onSubmit: SubmitHandler<UserProfile> = async (data: UserProfile) => {
-    // console.log(data);
-    // userUpdate.mutate(data, {
-    //   onError: async (error) => {
-    //     await handleApiErrors({ error, setError, showToast });
-    //   },
-    //   onSuccess: () => {
-    //     queryClient.invalidateQueries({ queryKey: ['user'] });
-    //     showToast({
-    //       type: 'success',
-    //       message: 'User updated successfully',
-    //       duration: 1000,
-    //     });
-    //   },
-    // });
+    userUpdate.mutate(data, {
+      onError: async (error) => {
+        console.log(error);
+        await handleApiErrors({ error, setError, showToast });
+      },
+      onSuccess: () => {
+        queryClient.invalidateQueries({ queryKey: ['user'] });
+        showToast({
+          type: 'success',
+          message: 'User updated successfully',
+          duration: 1000,
+        });
+      },
+    });
   };
 
   return (
@@ -106,7 +106,6 @@ export default function Profile() {
               onBlur={onBlur}
               onChangeText={onChange}
               value={value}
-              // error={errors.bio?.message}
             />
           )}
         />
@@ -193,7 +192,9 @@ export default function Profile() {
         />
       </View>
 
-      <Button style={tw`mb-12`} disabled={userUpdate.isPending} onPress={handleSubmit(onSubmit)}>
+      <Button style={tw`mb-12`} 
+      // disabled={userUpdate.isPending} 
+      onPress={handleSubmit(onSubmit)}>
         Save Changes
       </Button>
     </ScrollView>
@@ -221,7 +222,7 @@ function Gender({ onChange, value }: {onChange: any, value: boolean}) {
   )
 }
 
-function BirthDate({ onChange, value }: {onChange: any, value: string}) {
+function BirthDate({ onChange, value }: {onChange: any, value: string | null}) {
   const {data: user} = useUserQuery();
   const [date, setDate] = useState(
     user?.birthdate !== null ? new Date(user?.birthdate as string) :
